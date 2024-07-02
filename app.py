@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import pytesseract
-from transformers import pipeline
+# from transformers import pipeline/
 import requests
 from g4f.client import Client
 # import easyocr
@@ -10,6 +10,9 @@ st.title("Image to Text, Trend Analysis, and Note Generation")
 
 # Image Upload when image upload then perform all task on it
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
@@ -47,10 +50,27 @@ if uploaded_file is not None:
     #                     max_length=300)
     # st.write(article[0]['generated_text'])
 
+    prompt = f"""
+        You are a diligent note-taker. For the uploaded images, generate notes containing the most important information.
+        These images are typically taken from slides, meeting notes, or similar sources. Your task is to help extract and structure the notes.
+        
+        Provide the output directly in the format of notes, without any additional commentary. The generated notes should be structured as follows:
+        
+        ## Title
+        - A summary paragraph.
+        - Detailed information extracted from the image.
+        - Any tables should retain their original format.
+        
+        Use the same language as the text in the image. Do not change the language.
+        
+        {text}
+    """
+
+
     client = Client()
     response = client.chat.completions.create(
-        model='gpt4-o',
-        messages=[{"role": "user", "content": text}],
+        model='gpt-4o',
+        messages=[{"role": "user", "content": prompt}],
     )
     bot_response = response.choices[0].message.content
 
