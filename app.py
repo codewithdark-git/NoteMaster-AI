@@ -4,11 +4,11 @@ import pytesseract
 from transformers import pipeline
 import requests
 from g4f.client import Client
-import easyocr
+# import easyocr
 
 st.title("Image to Text, Trend Analysis, and Note Generation")
 
-# Image Upload
+# Image Upload when image upload then perform all task on it
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
@@ -16,20 +16,20 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Image.', use_column_width=True)
 
 
-    def extract_text_from_image(image_path, lang=['en']):
-        # Initialize the OCR reader
-        reader = easyocr.Reader(lang)  # 'en' for English, you can add more languages if needed
-
-        # Read the image
-        result = reader.readtext(image_path)
-
-        # Extract and combine the text
-        extracted_text = " ".join([text[1] for text in result])
-
-        return extracted_text
-
+    # def extract_text_from_image(image_path, lang=['en']):
+    #     # Initialize the OCR reader
+    #     reader = easyocr.Reader(lang)  # 'en' for English, you can add more languages if needed
+    #
+    #     # Read the image
+    #     result = reader.readtext(image_path)
+    #
+    #     # Extract and combine the text
+    #     extracted_text = " ".join([text[1] for text in result])
+    #
+    #     return extracted_text
+    #
     # Image to Text
-    text = extract_text_from_image(image)
+    text = pytesseract.image_to_string(image)
     st.write("Extracted Text:")
     st.write(text)
 
