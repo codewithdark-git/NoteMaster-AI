@@ -18,52 +18,32 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-
-    # def extract_text_from_image(image_path, lang=['en']):
-    #     # Initialize the OCR reader
-    #     reader = easyocr.Reader(lang)  # 'en' for English, you can add more languages if needed
-    #
-    #     # Read the image
-    #     result = reader.readtext(image_path)
-    #
-    #     # Extract and combine the text
-    #     extracted_text = " ".join([text[1] for text in result])
-    #
-    #     return extracted_text
-    #
-    # Image to Text
+    # image to text
     text = pytesseract.image_to_string(image)
-    st.write("Extracted Text:")
-    st.write(text)
+    # st.write("Extracted Text:")
+    # st.write(text)
 
-    # # Topic Analysis
-    # classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-    # topics = ["technology", "science", "art", "history", "business"]
-    # classification = classifier(text, topics)
-    # st.write("Identified Topics:")
-    # st.write(classification)
+    prompt =f"""
+    You are an expert note-taker. Your task is to extract and organize the most critical information from the uploaded images.
+    These images often come from slides, meeting notes, homeworks, school notes, online meeting, Assignments or similar sources.
 
-    # # Text Generation
-    # generator = pipeline("text-generation", model="gpt-2")
-    # st.write("Generated Article:")
-    # article = generator(f"Write an article about {classification['labels'][0]} based on the following text: {text}",
-    #                     max_length=300)
-    # st.write(article[0]['generated_text'])
+    Your notes should be:
+    - **Concise**: Focus on the key points.
+    - **Clear**: Easy to understand and follow.
+    - **Well-structured**: Formatted for readability.
 
-    prompt = f"""
-        You are a diligent note-taker. For the uploaded images, generate notes containing the most important information.
-        These images are typically taken from slides, meeting notes, or similar sources. Your task is to help extract and structure the notes.
-        
-        Provide the output directly in the format of notes, without any additional commentary. The generated notes should be structured as follows:
-        
-        ## Title
-        - A summary paragraph.
-        - Detailed information extracted from the image.
-        - Any tables should retain their original format.
-        
-        Use the same language as the text in the image. Do not change the language.
-        
-        {text}
+    Avoid adding unnecessary commentary. Structure your notes as follows:
+
+    ## Title
+    - **Summary**: A brief paragraph summarizing the main points.
+    - **Details**: Organized information from the image, using bullet points or numbered lists where applicable.
+    - **Tables**: Retain the original table format, ensuring all data is accurately captured.
+
+    Maintain the language used in the image. Do not translate or alter the text.
+
+    Here is the extracted text:
+
+    {text}
     """
 
 
@@ -104,7 +84,3 @@ if uploaded_file is not None:
     # notion_response = create_notion_page(notion_token, notion_database_id, "Generated Article",
     #                                      article[0]['generated_text'])
     # st.write("Article saved to Notion")
-
-# import pytesseract
-# print(pytesseract.get_tesseract_version())
-
