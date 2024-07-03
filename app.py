@@ -6,6 +6,7 @@ from g4f.client import Client
 from fpdf import FPDF
 from docx import Document
 import io
+import os
 
 st.title("Image to Text, Trend Analysis, and Note Generation")
 
@@ -35,7 +36,6 @@ def save_as_doc(content):
     buffer = io.BytesIO()
     doc.save(buffer)
     return buffer.getvalue()
-
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
@@ -108,7 +108,7 @@ if uploaded_file is not None:
         response = requests.post(url, headers=headers, json=data)
         return response.json()
 
-    notion_token = "secret_Gtxaphwv7Knm4QAIlSjJ59g9mcXx5dMrmMflnE8pSqo"
-    notion_database_id = "29f4e3414d08409f80e41e3b3b3d5f9b"
+    notion_token = os.getenv('NOTION_TOKEN')
+    notion_database_id = os.getenv('NOTION_DATABASE_ID')
     notion_response = create_notion_page(notion_token, notion_database_id, "Generated Notes", bot_response)
     st.write("Notes saved to Notion")
