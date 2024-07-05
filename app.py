@@ -8,7 +8,7 @@ from utils.ocr import image_to_text
 import pyperclip
 import io
 
-st.set_page_config(page_title="Enhanced Note Generator", layout="wide")
+st.set_page_config(page_title="NoteMaster AI || Enhanced Note Generator", layout="wide")
 
 st.title("📝 Turn your photos into notes with AI")
 
