@@ -1,0 +1,7 @@
+streamlit
+Pillow
+pytesseract
+requests
+fpdf
+python-docx
+pyperclip
