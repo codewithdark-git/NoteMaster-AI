@@ -1,105 +1,104 @@
 import streamlit as st
 from PIL import Image
-import pytesseract
+import base64
 import requests
 from g4f.client import Client
-from fpdf import FPDF
-from docx import Document
-import io
+from utils.helper import save_as_pdf, save_as_doc, save_as_txt
+from utils.ocr import image_to_text
 import pyperclip
+import io
 
 st.set_page_config(page_title="Enhanced Note Generator", layout="wide")
 
-st.title("📝 Image to Text, Trend Analysis, and Note Generation")
+st.title("📝 Turn your photos into notes with AI")
 
-uploaded_file = st.file_uploader("📁 Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+all_done = 0
+text_list = []
 
+if uploaded_files:
+    for uploaded_file in uploaded_files:
+        image = Image.open(uploaded_file)
 
-def save_as_txt(content):
-    buffer = io.BytesIO()
-    buffer.write(content.encode())
-    buffer.seek(0)
-    return buffer
+        # Convert image to RGB mode if it is in RGBA mode
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
 
+        st.image(image, caption='Uploaded Image', use_column_width=True)
 
-def save_as_pdf(content):
-    buffer = io.BytesIO()
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, content)
-    pdf.output(buffer)
-    buffer.seek(0)
-    return buffer
+        # Convert image to base64
+        buffered = io.BytesIO()
+        image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
 
+        # Extract text
+        extracted_text = image_to_text(image)
+        text_list.append(extracted_text)
 
-def save_as_doc(content):
-    doc = Document()
-    doc.add_paragraph(content)
-    buffer = io.BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-    return buffer
+        all_done += 1
+        st.success('Processed Image Successfully!')
 
+    if all_done == len(uploaded_files) and all_done > 0:
+        st.balloons()
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+        combined_text = "\n\n".join(text_list)
+        st.markdown('---')
 
-    text = pytesseract.image_to_string(image)
-    st.markdown('---')
+        prompt = f"""
+        You are an expert note-taker. Extract and organize the critical information from the uploaded images.
+        The notes should be:
+        - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
+        - **Concise**: Focus on key points.
+        - **Clear**: Easy to read.
+        - **Well-structured**: Organized format.
+        
+        Avoid unnecessary commentary. Structure notes as follows:
 
-    prompt = f"""
-    You are an expert note-taker. Extract and organize the critical information from the uploaded image.
-    The notes should be:
-    - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
-    - **Concise**: Focus on key points.
-    - **Clear**: Easy to read.
-    - **Well-structured**: Organized format.
+        ## Title
+        - **Intro**: Description of the image.
+        - **Details**: solve the problem with more details.
+        - **Summary**: Brief paragraph summarizing main points.
+        - **Source**: Provide some link or reference about the image.
 
-    Avoid unnecessary commentary. Structure notes as follows:
+        Maintain the original language from the image. Do not alter the text.
 
-    ## Title
-    - **Intro**: Description of the image.
-    - **Details**: Bullet points or lists.
-    - **Summary**: Brief paragraph summarizing main points.
-    - **Source**: Provide some link or reference about the image.
+        If the image contains math-related content, solve the problems and present them in math format.
 
-    Maintain the original language from the image. Do not alter the text.
+        Extracted text:
 
-    Extracted text:
+        {combined_text}
+        """
 
-    {text}
-    """
+        client = Client()
+        response = client.chat.completions.create(
+            model='gpt-4o',
+            messages=[{"role": "user", "content": prompt}],
+        )
+        bot_response = response.choices[0].message.content
 
-    client = Client()
-    response = client.chat.completions.create(
-        model='gpt-4o',
-        messages=[{"role": "user", "content": prompt}],
-    )
-    bot_response = response.choices[0].message.content
+        st.subheader("Generated Notes")
+        st.write(bot_response)
 
-    st.subheader("Generated Notes")
-    st.write(bot_response)
+        st.markdown('---')
 
-    st.markdown('---')
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            if st.button('Download as TXT'):
+                st.download_button('Download Notes', save_as_txt(bot_response), file_name='notes.txt')
 
-    col1, col2, col3 = st.columns([2, 1, 1])
-    option = st.selectbox('Select download format', ('.txt', '.pdf', '.doc'))
+        with col2:
+            if st.button('Download as PDF'):
+                st.download_button('Download Notes', save_as_pdf(bot_response), file_name='notes.pdf')
 
-    with col1:
+        with col3:
+            if st.button('Download as DOCX'):
+                st.download_button('Download Notes', save_as_doc(bot_response), file_name='notes.docx')
 
-        if option == '.txt':
-            st.download_button('Download Notes', save_as_txt(bot_response), file_name='notes.txt')
-        elif option == '.pdf':
-            st.download_button('Download Notes', save_as_pdf(bot_response), file_name='notes.pdf')
-        elif option == '.doc':
-            st.download_button('Download Notes', save_as_doc(bot_response), file_name='notes.docx')
+        with col4:
+            if st.button('Copy to Clipboard'):
+                pyperclip.copy(bot_response)
+                st.success("Content copied to clipboard!")
 
-    with col2:
-        if st.button('Copy to Clipboard'):
-            pyperclip.copy(bot_response)
-            st.success("Content copied to clipboard!")
+        st.markdown('---')
 
