@@ -10,6 +10,8 @@ import io
 
 st.set_page_config(page_title="NoteMaster AI || Enhanced Note Generator", layout="wide")
 
+st.logo(image='https://looka.com/s/189130140')
+
 st.title("📝 Turn your photos into notes with AI")
 
 uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
