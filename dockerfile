@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9
+FROM python:3.10
 
 # Set the working directory in the container
 WORKDIR /app
@@ -19,4 +19,4 @@ EXPOSE 8501
 ENV PYTHONUNBUFFERED=1
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.enableCORS=false"]
+CMD ["streamlit", "run", "app.py"]
