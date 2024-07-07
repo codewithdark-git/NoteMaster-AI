@@ -1,9 +1,8 @@
-# Enhanced Note Generator
+# NoteMaster AI
 
 ## Overview
 
-The Enhanced Note Generator is a Streamlit application that converts images into well-structured notes using OCR and GPT-4. It supports multiple image uploads, provides various download options, and includes a feature to save notes to Google Docs.
-
+NoteMaster AI is a Streamlit-based web application that allows users to turn their photos into well-structured notes using AI. It supports various formats for saving notes and features functionalities to view, update, and delete saved notes.
 ## Features
 
 - **Multiple Image Upload**: Users can upload multiple images in JPG, JPEG, or PNG format.
@@ -12,6 +11,7 @@ The Enhanced Note Generator is a Streamlit application that converts images into
 - **Math Problem Solving**: Identifies and solves math-related content from images.
 - **Download Options**: Save notes as TXT, PDF, or DOCX files.
 - **Copy to Clipboard**: Easily copy generated notes to the clipboard.
+- **Edit save Notes**: Generate additional content for existing notes using custom prompts.
 
 
 ## Installation
