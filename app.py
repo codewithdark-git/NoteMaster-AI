@@ -92,7 +92,7 @@ def display_saved_notes(c):
 def main():
     load_css("style.css")
     conn, c = init_db()
-    # st.logo('logo.png')
+    st.logo('logo/side_bar.png', icon_image='logo/main_page.png')
 
     if 'selected_note_id' in st.session_state:
         note_content = st.session_state.selected_note_content
