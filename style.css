@@ -25,8 +25,13 @@ section div.stButton button:hover {
     transform: scale(1.1);
     transition: 0.55s;
 }
-/*
+
 img[data-testid="stLogo"] {
-            height: auto;
-            width: 10 rem;
+    height: auto;
+    width: 10rem;
+    margin: 0.5rem;
+    position: relative;
+    top: -5;
+    left: -5;
 }
+
