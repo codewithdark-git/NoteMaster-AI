@@ -30,38 +30,16 @@ def load_css(file_name):
 
 
 def process_images(uploaded_files):
-    text_list = []
     images = []
-
-    # Ensure the temporary directory exists
-    temp_dir = "temp_images"
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
-
+    text_list = []
     for uploaded_file in uploaded_files:
-        # Save the uploaded image temporarily
-        image_path = os.path.join(temp_dir, uploaded_file.name)
-        with open(image_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        # Process the image with OCR
-        extracted_text = image_to_text(image_path)
-        if extracted_text:
-            text_list.append(" ".join(extracted_text))
-        else:
-            st.warning(f"No text found in image {uploaded_file.name}")
-
-        # Open and display the image
-        image = Image.open(image_path)
-        # st.image(image, caption='Uploaded Image', use_column_width=True)
-        images.append(image)
-
+        image = Image.open(uploaded_file)
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
+        extracted_text = image_to_text(image)
+        text_list.append(extracted_text)
         st.success('Processed Image Successfully!')
         st.balloons()
-
-        # Optionally delete the temporary image file
-        os.remove(image_path)
-
     return text_list, images
 
 
@@ -98,13 +76,15 @@ def generate_prompt(combined_text, images):
     """
     return prompt
 
+
 def get_bot_response(prompt):
     client = Client()
     response = client.chat.completions.create(
-        model='gpt-4o',
+        model='gpt-4o', #gpt-3.5
         messages=[{"role": "user", "content": prompt}],
     )
     return response.choices[0].message.content
+
 
 def display_saved_notes(c, conn):
     st.sidebar.title("Saved Notes")
@@ -148,6 +128,7 @@ def main():
                 st.success("Copied")
 
         st.markdown('---')
+        st.write(note_content)
         custom_prompt = st.text_input("Add more content to these notes:")
         if st.button('Generate More Notes'):
             new_prompt = f"{note_content}\n\n{custom_prompt}"
@@ -178,7 +159,7 @@ def main():
             st.markdown('---')
             col1, col2, col3, col4, col5 = st.columns(5)
             with col1:
-                st.button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
+                st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
             with col2:
                 st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
             with col3:
