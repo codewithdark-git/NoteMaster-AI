@@ -5,7 +5,10 @@ import requests
 from g4f.client import Client
 from utils.helper import save_as_pdf, save_as_doc, save_as_txt
 from utils.ocr import image_to_text
+from numpy import asarray
 import pyperclip
+import os
+import cv2
 import io
 import sqlite3
 import datetime
@@ -20,22 +23,47 @@ def init_db():
     conn.commit()
     return conn, c
 
+
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+
 def process_images(uploaded_files):
     text_list = []
     images = []
+
+    # Ensure the temporary directory exists
+    temp_dir = "temp_images"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
     for uploaded_file in uploaded_files:
-        image = Image.open(uploaded_file)
-        if image.mode == 'RGBA':
-            image = image.convert('RGB')
-        extracted_text = image_to_text(image)
-        text_list.append(extracted_text)
+        # Save the uploaded image temporarily
+        image_path = os.path.join(temp_dir, uploaded_file.name)
+        with open(image_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        # Process the image with OCR
+        extracted_text = image_to_text(image_path)
+        if extracted_text:
+            text_list.append(" ".join(extracted_text))
+        else:
+            st.warning(f"No text found in image {uploaded_file.name}")
+
+        # Open and display the image
+        image = Image.open(image_path)
+        # st.image(image, caption='Uploaded Image', use_column_width=True)
         images.append(image)
+
         st.success('Processed Image Successfully!')
+        st.balloons()
+
+        # Optionally delete the temporary image file
+        os.remove(image_path)
+
     return text_list, images
+
 
 def generate_prompt(combined_text, images):
     image_data = "\n".join([f"![Image](data:image/jpeg;base64,{base64.b64encode(image.tobytes()).decode()})" for image in images])
