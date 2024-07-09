@@ -4,27 +4,13 @@ import base64
 import requests
 from g4f.client import Client
 import g4f
-from g4f.Provider import (
-    AItianhu,
-    Aichat,
-    Bard,
-    Bing,
-    ChatBase,
-    ChatgptAi,
-    OpenaiChat,
-    Vercel,
-    You,
-    Yqcloud,
-)
+from g4f.Provider import *
 from g4f.models import *
 from utils.helper import save_as_pdf, save_as_doc, save_as_txt
 from utils.ocr import image_to_text
-import google.generativeai as genai
-from numpy import asarray
 import sys
 import pyperclip
 import os
-import cv2
 import io
 import sqlite3
 import datetime
@@ -59,12 +45,20 @@ def process_images(uploaded_files):
     return text_list, images
 
 
-def generate_prompt(combined_text, images):
+def generate_prompt(combined_text, images, tags):
+    prompts = {
+        "General": "Create comprehensive notes that summarize the content clearly and concisely.",
+        "Coding": "Create detailed notes focusing on coding concepts and examples from the text.",
+        "Math": "Create structured notes explaining mathematical concepts and problems from the text.",
+        "Student Notes": "Create well-organized notes that highlight important points for students."
+    }
+
+    specific_prompts = "\n".join([f"Specific instructions for {tag} images:\n{prompts[tag]}" for tag in tags])
+
     prompt = f"""
-    You are an expert note-taker. For the uploaded images, generate notes that capture important
-    information across various fields, including coding, student notes, math, and general knowledge.
-    Your task is to extract and organize the key information directly, without unnecessary commentary.
-    Make the notes clear, concise, and well-structured.
+    You are an expert note-taker. For the uploaded {', '.join(tags)} images, generate notes that capture important
+    information across various fields. Your task is to extract and organize the key information directly, 
+    without unnecessary commentary. Make the notes clear, concise, and well-structured.
 
     The notes should be:
     - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
@@ -72,17 +66,7 @@ def generate_prompt(combined_text, images):
     - **Clear**: Easy to read.
     - **Well-structured**: Organized format.
 
-    Structure notes as follows:
-    ## Title
-    - **Intro**: Description of the image.
-    - **Details**: Provide detailed information or solutions.
-    - **Summary**: Brief paragraph summarizing main points.
-    - **Source**: Provide relevant links or references.
-
-    Remember:
-    - Use the original language from the image.
-    - Mention the simplest methods for beginners.
-    - Encourage understanding over memorization.
+    {specific_prompts}
 
     Extracted text:
     {combined_text}
@@ -91,11 +75,31 @@ def generate_prompt(combined_text, images):
     return prompt
 
 
+def generate_link_prompt(link, user_prompt):
+    prompt = f"""
+    This is the user prompt: {user_prompt}. You are an expert note-taker. For the provided {link},
+     generate notes that capture important information across various fields. Your task is to extract 
+     and organize the key information directly, without unnecessary commentary. Make the notes clear, 
+     concise, and well-structured.
+    
+    The notes should be:
+    - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
+    - **Concise**: Focus on key points.
+    - **Clear**: Easy to read.
+    - **Well-structured**: Organized format.
+    
+    Link:
+    {link}
+    """
+    return prompt
+
+
+
 def get_bot_response(prompt):
     client = Client()
     response = client.chat.completions.create(
-        model=g4f.models.gpt_35_turbo_16k, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o
-        provider=g4f.Provider.FreeGpt,
+        model=g4f.models.blackbox, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o
+        provider=g4f.Provider.Blackbox,
         messages=[{"role": "user", "content": prompt}],
     )
 
@@ -160,38 +164,76 @@ def main():
             st.session_state.selected_note_content = updated_notes
             st.rerun()
 
+
     else:
+
         st.title("📝 Turn your photos into notes with AI")
-        uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+        st.markdown('---')
+        option = st.selectbox('Choose generation method', ('From Images', 'From Links'))
+        col1, col2 = st.columns(2)
 
-        if uploaded_files:
-            with st.spinner('Taking notes...'):
-                text_list, images = process_images(uploaded_files)
-                combined_text = "\n\n".join(text_list)
-                prompt = generate_prompt(combined_text, images)
-                bot_response = get_bot_response(prompt)
-            st.subheader("Generated Notes")
-            st.write(bot_response)
-            st.markdown('---')
-            col1, col2, col3, col4, col5 = st.columns(5)
-            with col1:
-                st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
-            with col2:
-                st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
-            with col3:
-                st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx')
-            with col4:
-                if st.button('Copy'):
-                    pyperclip.copy(bot_response)
-                    st.success("Copied")
-            st.markdown('---')
 
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
-            conn.commit()
-            st.success('Notes saved in App.')
+        if option == 'From Images':
+                uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
+                                                  accept_multiple_files=True)
 
-            st.markdown('---')
+                tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
+                if uploaded_files:
+                    with st.spinner('Taking notes...'):
+                        text_list, images = process_images(uploaded_files)
+                        combined_text = "\n\n".join(text_list)
+                        prompt = generate_prompt(combined_text, images, tag)
+                        bot_response = get_bot_response(prompt)
+                    st.subheader("Generated Notes")
+                    st.write(bot_response)
+                    st.markdown('---')
+                    col1, col2, col3, col4, col5 = st.columns(5)
+                    with col1:
+                        st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
+                    with col2:
+                        st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
+                    with col3:
+                        st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx')
+                    with col4:
+                        if st.button('Copy'):
+                            pyperclip.copy(bot_response)
+                            st.success("Copied")
+                    st.markdown('---')
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
+                    conn.commit()
+                    st.success('Notes saved in App.')
+                    st.markdown('---')
+
+
+        elif option == 'From Links':
+                url = st.text_input("Enter the URL of the blog or YouTube video:")
+                user_prompt = st.text_input("Enter the prompt about you Link:")
+                # link_type = st.selectbox('Select Link Type', ('Blog', 'YouTube'))
+                if st.button('Generate from Link'):
+                    with st.spinner('Generating notes...'):
+                        prompt = generate_link_prompt(url, user_prompt)
+                        bot_response = get_bot_response(prompt)
+                    st.subheader("Generated Notes")
+                    st.write(bot_response)
+                    st.markdown('---')
+                    col1, col2, col3, col4, col5 = st.columns(5)
+                    with col1:
+                        st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
+                    with col2:
+                        st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
+                    with col3:
+                        st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx')
+                    with col4:
+                        if st.button('Copy'):
+                            pyperclip.copy(bot_response)
+                            st.success("Copied")
+                    st.markdown('---')
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
+                    conn.commit()
+                    st.success('Notes saved in App.')
+                    st.markdown('---')
 
     display_saved_notes(c, conn)
     conn.close()
