@@ -3,9 +3,25 @@ from PIL import Image
 import base64
 import requests
 from g4f.client import Client
+import g4f
+from g4f.Provider import (
+    AItianhu,
+    Aichat,
+    Bard,
+    Bing,
+    ChatBase,
+    ChatgptAi,
+    OpenaiChat,
+    Vercel,
+    You,
+    Yqcloud,
+)
+from g4f.models import *
 from utils.helper import save_as_pdf, save_as_doc, save_as_txt
 from utils.ocr import image_to_text
+import google.generativeai as genai
 from numpy import asarray
+import sys
 import pyperclip
 import os
 import cv2
@@ -78,11 +94,14 @@ def generate_prompt(combined_text, images):
 
 
 def get_bot_response(prompt):
+
     client = Client()
     response = client.chat.completions.create(
-        model='gpt-4o', #gpt-3.5
+        model='gpt-4', #gpt-3.5
+        provider=g4f.Provider.You,
         messages=[{"role": "user", "content": prompt}],
     )
+
     return response.choices[0].message.content
 
 
