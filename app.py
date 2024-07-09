@@ -60,7 +60,6 @@ def process_images(uploaded_files):
 
 
 def generate_prompt(combined_text, images):
-    image_data = "\n".join([f"![Image](data:image/jpeg;base64,{base64.b64encode(image.tobytes()).decode()})" for image in images])
     prompt = f"""
     You are an expert note-taker. For the uploaded images, generate notes that capture important
     information across various fields, including coding, student notes, math, and general knowledge.
@@ -88,17 +87,15 @@ def generate_prompt(combined_text, images):
     Extracted text:
     {combined_text}
 
-    {image_data}
     """
     return prompt
 
 
 def get_bot_response(prompt):
-
     client = Client()
     response = client.chat.completions.create(
-        model='gpt-4', #gpt-3.5
-        provider=g4f.Provider.You,
+        model=g4f.models.gpt_35_turbo_16k, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o
+        provider=g4f.Provider.FreeGpt,
         messages=[{"role": "user", "content": prompt}],
     )
 
@@ -147,13 +144,13 @@ def main():
                 st.success("Copied")
 
         st.markdown('---')
-        st.write(note_content)
+        # st.write(note_content)
         custom_prompt = st.text_input("Add more content to these notes:")
         if st.button('Generate More Notes'):
             new_prompt = f"{note_content}\n\n{custom_prompt}"
             with st.spinner('Generating more notes...'):
                 additional_notes = get_bot_response(new_prompt)
-            updated_notes = f"## Custom Prompt:\n\n*{custom_prompt}*\n\n## Additional Notes\n\n{additional_notes}"
+            updated_notes = f"{note_content}\n\n## Custom Prompt:\n\n*{custom_prompt}*\n\n## Additional Notes\n\n{additional_notes}"
             st.write(updated_notes)
             # if st.button('Save Updated Notes'):
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
