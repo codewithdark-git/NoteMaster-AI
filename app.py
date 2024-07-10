@@ -5,6 +5,7 @@ import requests
 from g4f.client import Client
 import g4f
 from g4f.Provider import *
+from g4f.Provider import BingCreateImages, OpenaiChat, Gemini
 from g4f.models import *
 from utils.helper import save_as_pdf, save_as_doc, save_as_txt
 from utils.ocr import image_to_text
@@ -94,12 +95,11 @@ def generate_link_prompt(link, user_prompt):
     return prompt
 
 
-
 def get_bot_response(prompt):
     client = Client()
     response = client.chat.completions.create(
-        model=g4f.models.blackbox, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o
-        provider=g4f.Provider.Blackbox,
+        model=g4f.models.gpt_35_turbo_16k, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o, mixtral_8x7b
+        # provider=g4f.Provider.ChatgptAi,
         messages=[{"role": "user", "content": prompt}],
     )
 
@@ -169,16 +169,16 @@ def main():
 
         st.title("📝 Turn your photos into notes with AI")
         st.markdown('---')
-        option = st.selectbox('Choose generation method', ('From Images', 'From Links'))
-        col1, col2 = st.columns(2)
-
+        option = st.radio('Choose generation method', ('From Images', 'From Links'), index=None)
+        # col1, col2 = st.columns(2)
 
         if option == 'From Images':
-                uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
+            tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
+
+            uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
                                                   accept_multiple_files=True)
 
-                tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
-                if uploaded_files:
+            if uploaded_files:
                     with st.spinner('Taking notes...'):
                         text_list, images = process_images(uploaded_files)
                         combined_text = "\n\n".join(text_list)
@@ -204,7 +204,6 @@ def main():
                     conn.commit()
                     st.success('Notes saved in App.')
                     st.markdown('---')
-
 
         elif option == 'From Links':
                 url = st.text_input("Enter the URL of the blog or YouTube video:")
