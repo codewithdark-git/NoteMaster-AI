@@ -1,30 +1,19 @@
 import streamlit as st
 from PIL import Image
-import base64
-import requests
-from g4f.client import Client
-import g4f
-from g4f.Provider import *
-from g4f.Provider import BingCreateImages, OpenaiChat, Gemini
-from g4f.models import *
-from utils.helper import save_as_pdf, save_as_doc, save_as_txt
-from utils.ocr import image_to_text
-import sys
-import pyperclip
-import os
+import numpy as np
 import io
-import sqlite3
 import datetime
-
-def init_db():
-    conn = sqlite3.connect('notes.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS notes (
-                 id INTEGER PRIMARY KEY, 
-                 content TEXT,
-                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-    conn.commit()
-    return conn, c
+from utils.helper import save_as_pdf, save_as_doc, save_as_txt, save_btn
+from utils.ocr import image_to_text
+from utils.llms import (
+    get_bot_response,
+    display_model_mapping,
+    get_model, get_provider,
+    generate_prompt,
+    generate_link_prompt
+)
+import tempfile
+from utils.db import init_db
 
 
 def load_css(file_name):
@@ -33,209 +22,209 @@ def load_css(file_name):
 
 
 def process_images(uploaded_files):
-    images = []
-    text_list = []
-    for uploaded_file in uploaded_files:
-        image = Image.open(uploaded_file)
-        if image.mode == 'RGBA':
-            image = image.convert('RGB')
-        extracted_text = image_to_text(image)
-        text_list.append(extracted_text)
-        st.success('Processed Image Successfully!')
-        st.balloons()
-    return text_list, images
+        images = []
+        text_list = []
+        for uploaded_file in uploaded_files:
+            image = Image.open(uploaded_file)
+            image_array = np.array(image)
+            if image.mode == 'RGBA':
+                image = image.convert('RGB')
+            extracted_text = image_to_text(image_array)
+            text_list.append(str(extracted_text))
+            images.append(image)
+            st.success('Processed Image Successfully!')
+            st.balloons()
+        return text_list, images
 
 
-def generate_prompt(combined_text, images, tags):
-    prompts = {
-        "General": "Create comprehensive notes that summarize the content clearly and concisely.",
-        "Coding": "Create detailed notes focusing on coding concepts and examples from the text.",
-        "Math": "Create structured notes explaining mathematical concepts and problems from the text.",
-        "Student Notes": "Create well-organized notes that highlight important points for students."
-    }
 
-    specific_prompts = "\n".join([f"Specific instructions for {tag} images:\n{prompts[tag]}" for tag in tags])
-
-    prompt = f"""
-    You are an expert note-taker. For the uploaded {', '.join(tags)} images, generate notes that capture important
-    information across various fields. Your task is to extract and organize the key information directly, 
-    without unnecessary commentary. Make the notes clear, concise, and well-structured.
-
-    The notes should be:
-    - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
-    - **Concise**: Focus on key points.
-    - **Clear**: Easy to read.
-    - **Well-structured**: Organized format.
-
-    {specific_prompts}
-
-    Extracted text:
-    {combined_text}
-
-    """
-    return prompt
-
-
-def generate_link_prompt(link, user_prompt):
-    prompt = f"""
-    This is the user prompt: {user_prompt}. You are an expert note-taker. For the provided {link},
-     generate notes that capture important information across various fields. Your task is to extract 
-     and organize the key information directly, without unnecessary commentary. Make the notes clear, 
-     concise, and well-structured.
-    
-    The notes should be:
-    - **long**: The notes should have a minimum length of 200 and a maximum length of 1000 to 20000 characters.
-    - **Concise**: Focus on key points.
-    - **Clear**: Easy to read.
-    - **Well-structured**: Organized format.
-    
-    Link:
-    {link}
-    """
-    return prompt
-
-
-def get_bot_response(prompt):
-    client = Client()
-    response = client.chat.completions.create(
-        model=g4f.models.gpt_35_turbo_16k, #gpt-3.5, blackbox, llama3_70b_instruct, meta, gpt_4o, mixtral_8x7b
-        # provider=g4f.Provider.ChatgptAi,
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    return response.choices[0].message.content
 
 
 def display_saved_notes(c, conn):
     st.sidebar.title("Saved Notes")
-    c.execute("SELECT id, content FROM notes ORDER BY timestamp DESC")
+    c.execute("SELECT id, content, image FROM notes ORDER BY timestamp DESC")
     rows = c.fetchall()
     for row in rows:
-        note_id, note_content = row
-        if st.sidebar.button(" ".join(note_content.split()[0:15]), key=note_id):
+        note_id, note_content, image_data = row
+        title = note_content.split('\n', 1)[0]
+        if st.sidebar.button(title, key=note_id):
             st.session_state.selected_note_id = note_id
             st.session_state.selected_note_content = note_content
+            st.session_state.selected_note_image = image_data
             st.rerun()
 
 
 def main():
+    st.set_page_config('NoteMasterAI', page_icon="random", layout="centered", initial_sidebar_state="auto")
     load_css("style.css")
     conn, c = init_db()
+    st.markdown("""
+        <div class="title">
+         Turn your <span>Photos, Links</span> into <span>Notes</span> with <span>NoteMasterAi</span>
+        </div>
+        """, unsafe_allow_html=True)
     st.logo('logo/side_bar.png', icon_image='logo/main_page.png')
+
+    display_model = st.sidebar.selectbox("Select Model", list(display_model_mapping.keys()), index=0)
+    internal_model = get_model(display_model)
+    provider_name = get_provider(internal_model)
 
     if 'selected_note_id' in st.session_state:
         note_content = st.session_state.selected_note_content
-        st.write(note_content)
+        note_image = st.session_state.selected_note_image
+        title, notes = note_content.split('\n', 1)
+        st.markdown(f"{title.strip()}")
+        if note_image:
+            image = Image.open(io.BytesIO(note_image))
+            st.image(image, caption='Saved Image', use_column_width=True)
+        st.write(notes.strip())
         st.markdown('---')
-        col1, col2, col3, col4, col5 = st.columns(5)
-        with col1:
-            if st.button('Delete Note'):
-                c.execute("DELETE FROM notes WHERE id=?", (st.session_state.selected_note_id,))
-                conn.commit()
-                del st.session_state.selected_note_id
-                del st.session_state.selected_note_content
-                st.rerun()
-
-        with col2:
-            st.download_button('Save as TXT', save_as_txt(note_content), file_name='notes.txt')
-        with col3:
-            st.download_button('Save as PDF', save_as_pdf(note_content), file_name='notes.pdf')
-        with col4:
-            st.download_button('Save as DOCX', save_as_doc(note_content), file_name='notes.docx')
-        with col5:
-            if st.button('Copy'):
-                pyperclip.copy(note_content)
-                st.success("Copied")
-
-        st.markdown('---')
-        # st.write(note_content)
+        if st.button('Delete Note'):
+            c.execute("DELETE FROM notes WHERE id=?", (st.session_state.selected_note_id,))
+            conn.commit()
+            del st.session_state.selected_note_id
+            del st.session_state.selected_note_content
+            del st.session_state.selected_note_image
+            st.toast('Notes Deleted', icon='☠️')
+            st.rerun()
+        save_btn(note_content)
         custom_prompt = st.text_input("Add more content to these notes:")
         if st.button('Generate More Notes'):
             new_prompt = f"{note_content}\n\n{custom_prompt}"
             with st.spinner('Generating more notes...'):
-                additional_notes = get_bot_response(new_prompt)
+                additional_notes = get_bot_response(new_prompt, internal_model, provider_name)
             updated_notes = f"{note_content}\n\n## Custom Prompt:\n\n*{custom_prompt}*\n\n## Additional Notes\n\n{additional_notes}"
             st.write(updated_notes)
-            # if st.button('Save Updated Notes'):
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            c.execute("UPDATE notes SET content=?, timestamp=? WHERE id=?", (updated_notes, timestamp, st.session_state.selected_note_id))
+            c.execute("UPDATE notes SET content=?, timestamp=? WHERE id=?",
+                      (updated_notes, timestamp, st.session_state.selected_note_id))
             conn.commit()
             st.success('Notes updated successfully!')
             st.session_state.selected_note_content = updated_notes
             st.rerun()
 
-
     else:
+        st.markdown("""
+        <style>
+            .stRadio div {
+                height: 100%;
+                flex-direction: row;
+                justify-content: center;
+                font-family: 'Poppins';
+                font-size: 18px;
+                font-weight: 400;
+            }
+            .stRadio div label {
+                color: #4CAF50;
+                background-color: #31333f;
+                border-radius: 10px;
+                padding: 0.5rem 1rem;
+                margin: 1rem;
+                cursor: pointer;
+                # transition: background-color font-size 0.1s ;
+                
+            }
+            .stRadio div label:hover {
+                background-color: Black;
+                font-size: 22px;
+                font-weight: 500;
+                transform: scale(1.1);
+                transition: 0.55s;
+            }
 
-        st.title("📝 Turn your photos into notes with AI")
-        st.markdown('---')
-        option = st.radio('Choose generation method', ('From Images', 'From Links'), index=None)
-        # col1, col2 = st.columns(2)
-
+        </style>
+        """, unsafe_allow_html=True)
+        option = st.radio('Choose generation method:', ('From Images', 'From Links'), index=None)
         if option == 'From Images':
             tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
+            with st.container():
+                col1, col2 = st.columns(2)
+                with col2:
+                    uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
+                                                      accept_multiple_files=True)
 
-            uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
-                                                  accept_multiple_files=True)
+                if 'capture_mode' not in st.session_state:
+                    st.session_state.capture_mode = False
 
+                with col1:
+                    if st.button('Start Camera'):
+                        st.session_state.capture_mode = True
+
+                if st.session_state.capture_mode:
+                    captured_files = st.camera_input('Take a Picture:')
+                    if captured_files:
+                        st.session_state.capture_mode = False
+
+            all_files = []
             if uploaded_files:
-                    with st.spinner('Taking notes...'):
-                        text_list, images = process_images(uploaded_files)
-                        combined_text = "\n\n".join(text_list)
-                        prompt = generate_prompt(combined_text, images, tag)
-                        bot_response = get_bot_response(prompt)
-                    st.subheader("Generated Notes")
-                    st.write(bot_response)
-                    st.markdown('---')
-                    col1, col2, col3, col4, col5 = st.columns(5)
-                    with col1:
-                        st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
-                    with col2:
-                        st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
-                    with col3:
-                        st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx')
-                    with col4:
-                        if st.button('Copy'):
-                            pyperclip.copy(bot_response)
-                            st.success("Copied")
-                    st.markdown('---')
-                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
-                    conn.commit()
-                    st.success('Notes saved in App.')
-                    st.markdown('---')
+                all_files.extend(uploaded_files)
+            if 'captured_files' in locals() and captured_files:
+                all_files.append(captured_files)
+
+            if all_files:
+                with st.spinner('Taking notes...'):
+                    text_list, images = process_images(all_files)
+                    combined_text = "\n\n".join(text_list)
+                    temp_image_paths = []
+                    for img in images:
+                        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+                        img.save(temp_file.name)
+                        temp_image_paths.append(temp_file.name)
+
+                    prompt = generate_prompt(combined_text, tag)
+                    bot_response = get_bot_response(prompt, internal_model, provider_name, image_paths=temp_image_paths)
+
+
+                    if '\n' in bot_response:
+                        title, notes = bot_response.split('\n', 1)
+                    else:
+                        title = bot_response
+                        notes = ""
+
+                st.markdown(f"{title.strip()}")
+                for img in images:
+                    st.image(img, caption='Uploaded Image', use_column_width=True)
+                st.write(notes.strip())
+                st.markdown('---')
+                save_btn(bot_response)
+                st.markdown('---')
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                for img in images:
+                    buffered = io.BytesIO()
+                    img.save(buffered, format="JPEG")
+                    img_str = buffered.getvalue()
+                    c.execute("INSERT INTO notes (content, image, timestamp) VALUES (?, ?, ?)",
+                              (f"**{title.strip()}**\n{notes.strip()}", img_str, timestamp))
+                conn.commit()
+                st.success('Notes saved in App.')
+                st.markdown('---')
 
         elif option == 'From Links':
-                url = st.text_input("Enter the URL of the blog or YouTube video:")
-                user_prompt = st.text_input("Enter the prompt about you Link:")
-                # link_type = st.selectbox('Select Link Type', ('Blog', 'YouTube'))
-                if st.button('Generate from Link'):
-                    with st.spinner('Generating notes...'):
-                        prompt = generate_link_prompt(url, user_prompt)
-                        bot_response = get_bot_response(prompt)
-                    st.subheader("Generated Notes")
-                    st.write(bot_response)
-                    st.markdown('---')
-                    col1, col2, col3, col4, col5 = st.columns(5)
-                    with col1:
-                        st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt')
-                    with col2:
-                        st.download_button('Save as PDF', save_as_pdf(bot_response), file_name='notes.pdf')
-                    with col3:
-                        st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx')
-                    with col4:
-                        if st.button('Copy'):
-                            pyperclip.copy(bot_response)
-                            st.success("Copied")
-                    st.markdown('---')
-                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
-                    conn.commit()
-                    st.success('Notes saved in App.')
-                    st.markdown('---')
+            url = st.text_input("Enter the URL of the blog or YouTube video:")
+            user_prompt = st.text_input("Enter the prompt about your Link:")
+            if st.button('Generate from Link'):
+                with st.spinner('Generating notes...'):
+                    prompt = generate_link_prompt(url, user_prompt)
+                    bot_response = get_bot_response(prompt, internal_model, provider_name)
+                    if '\n' in bot_response:
+                        title, notes = bot_response.split('\n', 1)
+                    else:
+                        title = bot_response
+                        notes = ""
+
+                st.markdown(f"{title.strip()}")
+                st.write(notes.strip())
+                st.markdown('---')
+                save_btn(bot_response)
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
+                conn.commit()
+                st.success('Notes saved in App.')
+                st.markdown('---')
 
     display_saved_notes(c, conn)
     conn.close()
+
 
 if __name__ == "__main__":
     main()
