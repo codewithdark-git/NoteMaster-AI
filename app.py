@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import io
 import datetime
-from utils.helper import save_as_pdf, save_as_doc, save_as_txt, save_btn
+from utils.helper import save_btn
 from utils.ocr import image_to_text
 from utils.llms import (
     get_bot_response,
@@ -12,7 +12,6 @@ from utils.llms import (
     generate_prompt,
     generate_link_prompt
 )
-import tempfile
 from utils.db import init_db
 
 
@@ -35,9 +34,6 @@ def process_images(uploaded_files):
             st.success('Processed Image Successfully!')
             st.balloons()
         return text_list, images
-
-
-
 
 
 def display_saved_notes(c, conn):
@@ -104,39 +100,9 @@ def main():
             st.rerun()
 
     else:
-        st.markdown("""
-        <style>
-            .stRadio div {
-                height: 100%;
-                flex-direction: row;
-                justify-content: center;
-                font-family: 'Poppins';
-                font-size: 18px;
-                font-weight: 400;
-            }
-            .stRadio div label {
-                color: #4CAF50;
-                background-color: #31333f;
-                border-radius: 10px;
-                padding: 0.5rem 1rem;
-                margin: 1rem;
-                cursor: pointer;
-                # transition: background-color font-size 0.1s ;
-                
-            }
-            .stRadio div label:hover {
-                background-color: Black;
-                font-size: 22px;
-                font-weight: 500;
-                transform: scale(1.1);
-                transition: 0.55s;
-            }
-
-        </style>
-        """, unsafe_allow_html=True)
-        option = st.radio('Choose generation method:', ('From Images', 'From Links'), index=None)
-        if option == 'From Images':
-            tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
+        option = st.sidebar.radio('Select Option to Generate :',('Generate From Images', 'Generate From Links'), index=None)
+        if option == 'Generate From Images':
+            # tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
             with st.container():
                 col1, col2 = st.columns(2)
                 with col2:
@@ -147,6 +113,7 @@ def main():
                     st.session_state.capture_mode = False
 
                 with col1:
+                    tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
                     if st.button('Start Camera'):
                         st.session_state.capture_mode = True
 
@@ -165,16 +132,8 @@ def main():
                 with st.spinner('Taking notes...'):
                     text_list, images = process_images(all_files)
                     combined_text = "\n\n".join(text_list)
-                    temp_image_paths = []
-                    for img in images:
-                        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
-                        img.save(temp_file.name)
-                        temp_image_paths.append(temp_file.name)
-
                     prompt = generate_prompt(combined_text, tag)
-                    bot_response = get_bot_response(prompt, internal_model, provider_name, image_paths=temp_image_paths)
-
-
+                    bot_response = get_bot_response(prompt, internal_model, provider_name)
                     if '\n' in bot_response:
                         title, notes = bot_response.split('\n', 1)
                     else:
@@ -199,7 +158,7 @@ def main():
                 st.success('Notes saved in App.')
                 st.markdown('---')
 
-        elif option == 'From Links':
+        elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")
             user_prompt = st.text_input("Enter the prompt about your Link:")
             if st.button('Generate from Link'):
