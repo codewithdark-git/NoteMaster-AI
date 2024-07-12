@@ -31,8 +31,7 @@ def process_images(uploaded_files):
             extracted_text = image_to_text(image_array)
             text_list.append(str(extracted_text))
             images.append(image)
-            st.success('Processed Image Successfully!')
-            st.balloons()
+            st.toast('Processed Image Successfully!', icon='🚀')
         return text_list, images
 
 
