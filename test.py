@@ -1,18 +1,15 @@
 import logging
-
 import g4f
 from g4f.client import Client
 import time
 
 # Define the models you want to test
 
-
-
 model = 'claude_3_sonnet' #g4f.models.
 # List to store results
 results = []
 
-logging.info(f'''
+print(f'''
     =========********=========
     Starting for {model}......
     =========********=========
@@ -29,7 +26,6 @@ working_providers = [
 client = Client()
 
 # Iterate through each model and provider and get the response
-
 for provider in working_providers:
         start_time = time.time()
         try:
@@ -52,3 +48,4 @@ with open('model_responses.txt', 'a') as file:
         file.write(result + "\n")
 
 print("Results saved to model_responses.txt")
+
