@@ -22,7 +22,6 @@ display_model_mapping = {
     'Mixtral 70b': 'mixtral_8x7b',
     'BlackBox': 'blackbox',
     'Meta AI': 'meta',
-
 }
 
 
