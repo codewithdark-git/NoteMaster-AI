@@ -3,11 +3,11 @@ from docx import Document
 import io
 import tempfile
 import streamlit as st
+
 import pyperclip
 
-
 def save_btn(bot_response):
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.download_button('Save as TXT', save_as_txt(bot_response), file_name='notes.txt'):
             st.toast('Notes Save as TXT', icon='🎉')
@@ -17,10 +17,10 @@ def save_btn(bot_response):
     with col3:
         if st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx'):
             st.toast('Notes Save as DOCX', icon='🎉')
-    with col4:
-        if st.button('Copy'):
-            pyperclip.copy(bot_response)
-            st.toast('Notes Copy to Clipboard', icon='🎉')
+    # with col4:
+    #     # if st.button('Copy'):
+    #     #     pyperclip.copy(bot_response)
+    #     #     st.toast('Notes Copy to Clipboard', icon='🎉')
     st.markdown('---')
 
 
