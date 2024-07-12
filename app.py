@@ -143,7 +143,7 @@ def main():
 
         elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")
-            user_prompt = st.chat_input("Enter the prompt about your Link:").capitalize()
+            user_prompt = st.chat_input("Enter the prompt about your Link:")
             if user_prompt:
                 with st.spinner(f'*{user_prompt}* \n {url}'):
                     prompt = generate_link_prompt(url, user_prompt)
