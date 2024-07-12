@@ -13,6 +13,16 @@ NoteMaster AI is a Streamlit-based web application that allows users to turn the
 - **Copy to Clipboard**: Easily copy generated notes to the clipboard.
 - **Edit save Notes**: Generate additional content for existing notes using custom prompts.
 
+## Available Models
+The following models are available in the app:
+
+- *GPT 3.5 turbo*
+- *GPT 4o*
+- *llama 3*
+- *Mixtral 70b*
+- *BlackBox*
+- *Meta AI*
+
 
 ## Installation
 
@@ -38,7 +48,7 @@ NoteMaster AI is a Streamlit-based web application that allows users to turn the
 
 1. Upload one or more images by clicking on "📁 Choose images...".
 2. Wait for the images to be processed and text to be extracted.
-3. View the generated notes in the "Generated Notes" section.
+3. View the generated notes in the "Saved Notes" section.
 4. Choose to download the notes as TXT, PDF, or DOCX, copy them to the clipboard, or save them to Google Docs.
 
 ## Customization
