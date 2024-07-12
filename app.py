@@ -59,7 +59,7 @@ def main():
          Turn your <span>Photos, Links</span> into <span>Notes</span> with <span>NoteMasterAi</span>
         </div>
         """, unsafe_allow_html=True)
-    st.logo('logo/side_bar.png', icon_image='logo/main_page.png')
+    # st.logo('logo/side_bar.png', icon_image='logo/main_page.png')
 
     display_model = st.sidebar.selectbox("Select Model", list(display_model_mapping.keys()), index=0)
     internal_model = get_model(display_model)
@@ -68,12 +68,13 @@ def main():
     if 'selected_note_id' in st.session_state:
         note_content = st.session_state.selected_note_content
         note_image = st.session_state.selected_note_image
-        title, notes = note_content.split('\n', 1)
-        st.markdown(f"{title.strip()}")
+        # title = note_content.split("\n", 1)[0]
+        # st.subheader(str(title).replace("[ ' ' ]", " "))
+        st.markdown('---')
         if note_image:
             image = Image.open(io.BytesIO(note_image))
             st.image(image, caption='Saved Image', use_column_width=True)
-        st.write(notes.strip())
+        st.write(note_content)
         st.markdown('---')
         if st.button('Delete Note'):
             c.execute("DELETE FROM notes WHERE id=?", (st.session_state.selected_note_id,))
@@ -84,101 +85,71 @@ def main():
             st.toast('Notes Deleted', icon='☠️')
             st.rerun()
         save_btn(note_content)
-        custom_prompt = st.text_input("Add more content to these notes:")
-        if st.button('Generate More Notes'):
+        custom_prompt = st.chat_input("Add more content to these notes:")
+        if custom_prompt:
             new_prompt = f"{note_content}\n\n{custom_prompt}"
-            with st.spinner('Generating more notes...'):
+            with st.spinner(f'{custom_prompt} ....'):
                 additional_notes = get_bot_response(new_prompt, internal_model, provider_name)
-            updated_notes = f"{note_content}\n\n## Custom Prompt:\n\n*{custom_prompt}*\n\n## Additional Notes\n\n{additional_notes}"
+            updated_notes = f"{note_content}\n\n####{custom_prompt}\n\n## Additional Notes\n\n{additional_notes}"
             st.write(updated_notes)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             c.execute("UPDATE notes SET content=?, timestamp=? WHERE id=?",
                       (updated_notes, timestamp, st.session_state.selected_note_id))
             conn.commit()
-            st.success('Notes updated successfully!')
+            st.toast('Notes updated successfully!', icon='🎊')
             st.session_state.selected_note_content = updated_notes
             st.rerun()
 
     else:
-        option = st.sidebar.radio('Select Option to Generate :',('Generate From Images', 'Generate From Links'), index=None)
+        option = st.radio('Select Option to Generate :', ('Generate From Images', 'Generate From Links'), index=None)
         if option == 'Generate From Images':
-            # tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
-            with st.container():
-                col1, col2 = st.columns(2)
-                with col2:
-                    uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"],
-                                                      accept_multiple_files=True)
+            tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
 
-                if 'capture_mode' not in st.session_state:
-                    st.session_state.capture_mode = False
-
-                with col1:
-                    tag = st.multiselect('Select the image belong to', ('General', 'Coding', 'Math', 'Student Notes'))
-                    if st.button('Start Camera'):
-                        st.session_state.capture_mode = True
-
-                if st.session_state.capture_mode:
-                    captured_files = st.camera_input('Take a Picture:')
-                    if captured_files:
-                        st.session_state.capture_mode = False
+            uploaded_files = st.file_uploader("📁 Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
             all_files = []
             if uploaded_files:
                 all_files.extend(uploaded_files)
-            if 'captured_files' in locals() and captured_files:
-                all_files.append(captured_files)
 
             if all_files:
                 with st.spinner('Taking notes...'):
                     text_list, images = process_images(all_files)
                     combined_text = "\n\n".join(text_list)
                     prompt = generate_prompt(combined_text, tag)
-                    bot_response = get_bot_response(prompt, internal_model, provider_name)
-                    if '\n' in bot_response:
-                        title, notes = bot_response.split('\n', 1)
-                    else:
-                        title = bot_response
-                        notes = ""
-
-                st.markdown(f"{title.strip()}")
+                    try:
+                        bot_response = get_bot_response(prompt, internal_model, provider_name)
+                    except Exception as e:
+                        st.error(f'Error generating bot response {e}')
+                st.markdown('---')
                 for img in images:
                     st.image(img, caption='Uploaded Image', use_column_width=True)
-                st.write(notes.strip())
-                st.markdown('---')
+                st.write(bot_response)
                 save_btn(bot_response)
-                st.markdown('---')
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 for img in images:
                     buffered = io.BytesIO()
                     img.save(buffered, format="JPEG")
                     img_str = buffered.getvalue()
                     c.execute("INSERT INTO notes (content, image, timestamp) VALUES (?, ?, ?)",
-                              (f"**{title.strip()}**\n{notes.strip()}", img_str, timestamp))
+                              (bot_response, img_str, timestamp))
                 conn.commit()
-                st.success('Notes saved in App.')
-                st.markdown('---')
+                st.toast('Notes saved in App.', icon='🎊')
 
         elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")
-            user_prompt = st.text_input("Enter the prompt about your Link:")
-            if st.button('Generate from Link'):
-                with st.spinner('Generating notes...'):
+            user_prompt = st.chat_input("Enter the prompt about your Link:")
+            if user_prompt:
+                with st.spinner(f'{user_prompt} \n {url}'):
                     prompt = generate_link_prompt(url, user_prompt)
                     bot_response = get_bot_response(prompt, internal_model, provider_name)
-                    if '\n' in bot_response:
-                        title, notes = bot_response.split('\n', 1)
-                    else:
-                        title = bot_response
-                        notes = ""
-
-                st.markdown(f"{title.strip()}")
-                st.write(notes.strip())
-                st.markdown('---')
+                st.markdown('----')
+                st.chat_message("user").write(f'{user_prompt} \n {url}')
+                st.write(bot_response)
                 save_btn(bot_response)
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
                 conn.commit()
-                st.success('Notes saved in App.')
+                st.toast('Notes saved in App.', icon='🎉')
                 st.markdown('---')
 
     display_saved_notes(c, conn)
