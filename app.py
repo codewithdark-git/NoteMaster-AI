@@ -84,13 +84,16 @@ def main():
             del st.session_state.selected_note_image
             st.toast('Notes Deleted', icon='☠️')
             st.rerun()
-        save_btn(note_content)
+        try:
+            save_btn(note_content)
+        except Exception as e:
+            st.error(f'Error Occur Try Again: {e}')
         custom_prompt = st.chat_input("Add more content to these notes:")
         if custom_prompt:
             new_prompt = f"{note_content}\n\n{custom_prompt}"
             with st.spinner(f'{custom_prompt} ....'):
                 additional_notes = get_bot_response(new_prompt, internal_model, provider_name)
-            updated_notes = f"{note_content}\n\n####{custom_prompt}\n\n## Additional Notes\n\n{additional_notes}"
+            updated_notes = f"{note_content}\n\n#### Your Prompt:\n {custom_prompt}\n\n### Additional Notes\n\n{additional_notes}"
             st.write(updated_notes)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             c.execute("UPDATE notes SET content=?, timestamp=? WHERE id=?",
@@ -124,7 +127,10 @@ def main():
                 for img in images:
                     st.image(img, caption='Uploaded Image', use_column_width=True)
                 st.write(bot_response)
-                save_btn(bot_response)
+                try:
+                    save_btn(bot_response)
+                except Exception as e:
+                    st.error(f'Error Occur Try Again: {e}')
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 for img in images:
                     buffered = io.BytesIO()
@@ -137,15 +143,18 @@ def main():
 
         elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")
-            user_prompt = st.chat_input("Enter the prompt about your Link:")
+            user_prompt = st.chat_input("Enter the prompt about your Link:").capitalize()
             if user_prompt:
-                with st.spinner(f'{user_prompt} \n {url}'):
+                with st.spinner(f'*{user_prompt}* \n {url}'):
                     prompt = generate_link_prompt(url, user_prompt)
                     bot_response = get_bot_response(prompt, internal_model, provider_name)
                 st.markdown('----')
-                st.chat_message("user").write(f'{user_prompt} \n {url}')
+                st.chat_message("user").write(f'*{user_prompt}* \n {url}')
                 st.write(bot_response)
-                save_btn(bot_response)
+                try:
+                    save_btn(bot_response)
+                except Exception as e:
+                    st.error(f'Error Occur Try Again: {e}')
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 c.execute("INSERT INTO notes (content, timestamp) VALUES (?, ?)", (bot_response, timestamp))
                 conn.commit()

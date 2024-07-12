@@ -8,7 +8,7 @@ import time
 
 
 
-model = 'codellama_70b_instruct'
+model = 'gpt-3.5-turbo'
 # List to store results
 results = []
 
