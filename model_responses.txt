@@ -538,3 +538,199 @@ Provider: Yqcloud
 Error: Failed to perform, curl: (60) SSL certificate problem: certificate has expired. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
 Time taken: 16.51 seconds
 
+Model: gpt-3.5-turbo
+Provider: AI365VIP
+Error: 403, message='Forbidden', url=URL('https://chat.ai365vip.com/api/chat')
+Time taken: 54.88 seconds
+
+Model: gpt-3.5-turbo
+Provider: AItianhuSpace
+Error: Remote end closed connection without response
+Time taken: 34.90 seconds
+
+Model: gpt-3.5-turbo
+Provider: Aura
+Error: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="challenge-body-text"]"}
+  (Session info: chrome=126.0.6478.127); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x010DC1C3+27395]
+	(No symbol) [0x01073DC4]
+	(No symbol) [0x00F71B7F]
+	(No symbol) [0x00FB2C65]
+	(No symbol) [0x00FB2D3B]
+	(No symbol) [0x00FEEC82]
+	(No symbol) [0x00FD39E4]
+	(No symbol) [0x00FECB24]
+	(No symbol) [0x00FD3736]
+	(No symbol) [0x00FA7541]
+	(No symbol) [0x00FA80BD]
+	GetHandleVerifier [0x01393A93+2876371]
+	GetHandleVerifier [0x013E7F5D+3221661]
+	GetHandleVerifier [0x0115D634+556916]
+	GetHandleVerifier [0x0116474C+585868]
+	(No symbol) [0x0107CE04]
+	(No symbol) [0x01079818]
+	(No symbol) [0x010799B7]
+	(No symbol) [0x0106BF0E]
+	BaseThreadInitThunk [0x75A37BA9+25]
+	RtlInitializeExceptionChain [0x779BC10B+107]
+	RtlClearBits [0x779BC08F+191]
+
+Time taken: 238.22 seconds
+
+Model: gpt-3.5-turbo
+Provider: Bing
+Error: Model is not supported: gpt-3.5-turbo in: Bing
+Time taken: 0.00 seconds
+
+Model: gpt-3.5-turbo
+Provider: BingCreateImages
+Response: 
+<!-- generated images start -->
+[![#1 hi, how are you](https://tse2.mm.bing.net/th/id/OIG1..lU6jdGrcQd7C6aMzAoC?w=200&h=200)](https://tse2.mm.bing.net/th/id/OIG1..lU6jdGrcQd7C6aMzAoC)
+[![#2 hi, how are you](https://tse3.mm.bing.net/th/id/OIG1.3KzBTHNpiDUM.4Jqt060?w=200&h=200)](https://tse3.mm.bing.net/th/id/OIG1.3KzBTHNpiDUM.4Jqt060)
+[![#3 hi, how are you](https://tse2.mm.bing.net/th/id/OIG1.hdaJ4Ss0fNnHRnUM4jJB?w=200&h=200)](https://tse2.mm.bing.net/th/id/OIG1.hdaJ4Ss0fNnHRnUM4jJB)
+[![#4 hi, how are you](https://tse3.mm.bing.net/th/id/OIG1.McyUye_6aC8uQ7mcm32f?w=200&h=200)](https://tse3.mm.bing.net/th/id/OIG1.McyUye_6aC8uQ7mcm32f)
+<!-- generated images end -->
+
+
+Time taken: 41.93 seconds
+
+Model: gpt-3.5-turbo
+Provider: Blackbox
+Response: Hi! I'm just a language model, I don't have feelings or emotions like humans do, so I don't have good or bad days. I'm always "on" and ready to help with any questions or tasks you may have! How can I assist you today?
+Time taken: 5.18 seconds
+
+Model: gpt-3.5-turbo
+Provider: Chatgpt4Online
+Response: Hello! I'm doing great, thank you for asking. How can I assist you today?
+Time taken: 179.96 seconds
+
+Model: gpt-3.5-turbo
+Provider: Chatgpt4o
+Response: Hello! I'm an AI, so I don't have feelings, but I'm here and ready to help you. How can I assist you today?
+Time taken: 5.29 seconds
+
+Model: gpt-3.5-turbo
+Provider: ChatgptFree
+Response: Hello! I am an AI assistant designed to assist you with various tasks. How can I help you today?
+Time taken: 4.56 seconds
+
+Model: gpt-3.5-turbo
+Provider: DDG
+Response: Hello! I'm just a computer program, so I don't have feelings, but I'm here and ready to help you. How can I assist you today?
+Time taken: 1.73 seconds
+
+Model: gpt-3.5-turbo
+Provider: DeepInfra
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: gpt-3.5-turbo
+Provider: DeepInfraImage
+Error: Model is not supported: gpt-3.5-turbo in: DeepInfraImage
+Time taken: 1.95 seconds
+
+Model: gpt-3.5-turbo
+Provider: FlowGpt
+Error: Response 403: <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+<title>Attention Required! | Cloudflare</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/cf.errors.css" />
+<!--[if lt IE 9]><link rel="stylesheet" id='cf_styles-ie-css' href="/cdn-cgi/styles/cf.errors.ie.css" /><![endif]-->
+<style>body{margin:0;padding:0}</style>
+
+
+<!--[if gte IE 10]><!-->
+<script>
+  if (!navigator.cookieEnabled) {
+    window.addEventListener('DOMContentLoaded', function () {
+      var cookieEl = document.getElementById('cookie-alert');
+      cookieEl.style.display = 'block';
+    })
+  }
+</script>
+<!--<![endif]-->
+
+
+</head>
+<body>
+  <div id="cf-wrapper">
+    <div class="cf-alert cf-alert-error cf-cookie-error" id="cookie-alert" data-translate="enable_cookies">Please enable cookies.</div>
+    <div id="cf-error-details" class="cf-error-details-wrapper">
+      <div class="cf-wrapper cf-header cf-error-overview">
+        <h1 data-translate="block_headline">Sorry, you have been blocked</h1>
+        <h2 class="cf-subheadline"><span data-translate="unable_to_access">You are unable to access</span> flowgpt.com</h2>
+      </div><!-- /.header -->
+
+      <div class="cf-section cf-highlight">
+        <div class="cf-wrapper">
+          <div class="cf-screenshot-container cf-screenshot-full">
+            
+              <span class="cf-no-screenshot error"></span>
+            
+          </div>
+        </div>
+      </div><!-- /.captcha-container -->
+
+      <div class="cf-section cf-wrapper">
+        <div class="cf-columns two">
+          <div class="cf-column">
+            <h2 data-translate="blocked_why_headline">Why have I been blocked?</h2>
+
+            <p data-translate="blocked_why_detail">This website is using a security service to protect itself from online attacks. The action you just performed triggered the security solution. There are several actions that could trigger this block including submitting a certain word or phrase, a SQL command or malformed data.</p>
+          </div>
+
+          <div class="cf-column">
+            <h2 data-translate="blocked_resolve_headline">What can I do to resolve this?</h2>
+
+            <p data-translate="blocked_resolve_detail">You can email the site owner to let them know you were blocked. Please include what you were doing when this page came up and the Cloudflare Ray ID found at the bottom of this page.</p>
+          </div>
+        </div>
+      </div><!-- /.section -->
+
+      <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">8a1ed839fa06410b</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">2401:ba80:a304:cf79:94cd:69df:cf6d:91c0</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div><!-- /#cf-error-details -->
+  </div><!-- /#cf-wrapper -->
+
+  <script>
+  window._cf_translation = {};
+  
+  
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8a1ed839fa06410b',t:'MTcyMDc2NDM1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+Time taken: 2.05 seconds
+
+Model: gpt-3.5-turbo
+Provider: FreeChatgpt
+Response: Hello! I'm an artificial intelligence, so I don't have feelings, but I'm functioning well. How can I assist you today?
+Time taken: 5.18 seconds
+

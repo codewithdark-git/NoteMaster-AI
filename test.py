@@ -8,7 +8,7 @@ import time
 
 
 
-model = 'gpt-3.5-turbo'
+model = 'claude_3_sonnet' #g4f.models.
 # List to store results
 results = []
 
