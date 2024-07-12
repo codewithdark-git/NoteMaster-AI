@@ -1,10 +1,13 @@
+import g4f.cookies
 from g4f.client import Client
 import base64
 
 
 # Dictionary mapping model names to provider names
 model_provider_mapping = {
+    # 'gpt-3.5-turbo': '',
     'gpt-4o': None,
+    'codellama_70b_instruct': 'MetaAI',
     'mixtral_8x7b': 'HuggingFace',
     'blackbox': 'Blackbox',
     'meta': 'MetaAI',
@@ -14,8 +17,10 @@ model_provider_mapping = {
 
 # Dictionary mapping display model names to internal model names
 display_model_mapping = {
+    # 'gpt 3.5 turbo': 'gpt-3.5-turbo',
     'gpt 4o': 'gpt-4o',
     'llama 3': 'llama3_70b_instruct',
+    'code llama': 'codellama_70b_instruct',
     'Mixtral 70b': 'mixtral_8x7b',
     'BlackBox': 'blackbox',
     'Meta AI': 'meta',
@@ -83,24 +88,14 @@ def generate_link_prompt(link, user_prompt):
 
 
 def get_bot_response(prompt, internal_model, provider_name):
-   try:
         client = Client()
         response = client.chat.completions.create(
             model=internal_model,
             messages=[{"role": "user", "content": prompt}],
             provider=provider_name,
+            cookies=g4f.cookies.get_cookies('bing')
         )
         return response.choices[0].message.content
 
-   except Exception as InterruptedError:
-        return 'Check Your Connect and Try Again'
-   except Exception as ConnectionError:
-        return "Check Your Internet Connection"
-   except Exception as NotImplemented:
-        return 'Not Implemented'
-   except Exception as TimeoutError:
-       return 'Timeout Try Again'
-   except Exception as e:
-       return "An unexpected error occurred. Please try again later."
 
 
