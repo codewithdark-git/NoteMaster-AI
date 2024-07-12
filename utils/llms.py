@@ -7,7 +7,6 @@ import base64
 model_provider_mapping = {
     'gpt-3.5-turbo': 'DDG',
     'gpt-4o': None,
-    'codellama_70b_instruct': 'MetaAI',
     'mixtral_8x7b': 'HuggingFace',
     'blackbox': 'Blackbox',
     'meta': 'MetaAI',
@@ -20,7 +19,6 @@ display_model_mapping = {
     'gpt 3.5 turbo': 'gpt-3.5-turbo',
     'gpt 4o': 'gpt-4o',
     'llama 3': 'llama3_70b_instruct',
-    'code llama': 'codellama_70b_instruct',
     'Mixtral 70b': 'mixtral_8x7b',
     'BlackBox': 'blackbox',
     'Meta AI': 'meta',
