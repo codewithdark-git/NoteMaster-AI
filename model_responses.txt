@@ -734,3 +734,353 @@ Provider: FreeChatgpt
 Response: Hello! I'm an artificial intelligence, so I don't have feelings, but I'm functioning well. How can I assist you today?
 Time taken: 5.18 seconds
 
+Model: claude_3_sonnet
+Provider: AI365VIP
+Error: 403, message='Forbidden', url=URL('https://chat.ai365vip.com/api/chat')
+Time taken: 150.38 seconds
+
+Model: claude_3_sonnet
+Provider: AItianhuSpace
+Error: <urlopen error retrieval incomplete: got only 422744 out of 8358340 bytes>
+Time taken: 2167.40 seconds
+
+Model: claude_3_sonnet
+Provider: Aura
+Error: <urlopen error retrieval incomplete: got only 169830 out of 8358340 bytes>
+Time taken: 662.38 seconds
+
+Model: claude_3_sonnet
+Provider: Bing
+Error: Model is not supported: claude_3_sonnet in: Bing
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: BingCreateImages
+Error: Cannot connect to host www.bing.com:443 ssl:default [getaddrinfo failed]
+Time taken: 0.42 seconds
+
+Model: claude_3_sonnet
+Provider: Blackbox
+Error: Cannot connect to host www.blackbox.ai:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: Chatgpt4Online
+Error: <urlopen error [Errno 11001] getaddrinfo failed>
+Time taken: 0.11 seconds
+
+Model: claude_3_sonnet
+Provider: Chatgpt4o
+Error: Failed to perform, curl: (6) Could not resolve host: chatgpt4o.one. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+Time taken: 0.12 seconds
+
+Model: claude_3_sonnet
+Provider: ChatgptFree
+Error: Failed to perform, curl: (6) Could not resolve host: chatgptfree.ai. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: DDG
+Error: Failed to obtain a valid VQD token
+Time taken: 3.05 seconds
+
+Model: claude_3_sonnet
+Provider: DeepInfra
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: DeepInfraImage
+Error: HTTPSConnectionPool(host='api.deepinfra.com', port=443): Max retries exceeded with url: /models/featured (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001DE83F0ABF0>: Failed to resolve 'api.deepinfra.com' ([Errno 11001] getaddrinfo failed)"))
+Time taken: 0.03 seconds
+
+Model: claude_3_sonnet
+Provider: FlowGpt
+Error: Model is not supported: claude_3_sonnet in: FlowGpt
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: FreeChatgpt
+Error: Cannot connect to host chat.chatgpt.org.uk:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: FreeGpt
+Error: Failed to perform, curl: (6) Could not resolve host: s.aifree.site. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+Time taken: 0.02 seconds
+
+Model: claude_3_sonnet
+Provider: Gemini
+Error: Cannot connect to host gemini.google.com:443 ssl:default [getaddrinfo failed]
+Time taken: 0.08 seconds
+
+Model: claude_3_sonnet
+Provider: GeminiPro
+Error: Model is not supported: claude_3_sonnet in: GeminiPro
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: GeminiProChat
+Error: Cannot connect to host www.chatgot.one:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: GigaChat
+Error: Model is not supported: claude_3_sonnet in: GigaChat
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: GptTalkRu
+Error: Install "selenium-wire" package
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: Groq
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: HuggingChat
+Response: 
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: HuggingFace
+Error: Cannot connect to host api-inference.huggingface.co:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: Koala
+Error: Cannot connect to host koala.sh:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: Liaobots
+Error: 'claude_3_sonnet'
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: Local
+Error: Install "gpt4all" package | pip install -U g4f[local]
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: MetaAI
+Error: Cannot connect to host www.meta.ai:443 ssl:default [getaddrinfo failed]
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: MetaAIAccount
+Error: Cannot connect to host www.meta.ai:443 ssl:default [getaddrinfo failed]
+Time taken: 0.10 seconds
+
+Model: claude_3_sonnet
+Provider: MyShell
+Error: <urlopen error [Errno 11001] getaddrinfo failed>
+Time taken: 0.08 seconds
+
+Model: claude_3_sonnet
+Provider: Ollama
+Error: HTTPConnectionPool(host='127.0.0.1', port=11434): Max retries exceeded with url: /api/tags (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001DE83F4EE30>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+Time taken: 2.07 seconds
+
+Model: claude_3_sonnet
+Provider: OpenRouter
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: Openai
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: OpenaiAccount
+Error: No .har file found
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: OpenaiChat
+Error: Cannot connect to host chatgpt.com:443 ssl:default [getaddrinfo failed]
+Time taken: 12.06 seconds
+
+Model: claude_3_sonnet
+Provider: PerplexityAi
+Error: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=126.0.6478.127)
+Stacktrace:
+	GetHandleVerifier [0x00F3C1C3+27395]
+	(No symbol) [0x00ED3DC4]
+	(No symbol) [0x00DD1B7F]
+	(No symbol) [0x00DAE483]
+	(No symbol) [0x00E3A06F]
+	(No symbol) [0x00E4C3D6]
+	(No symbol) [0x00E33736]
+	(No symbol) [0x00E07541]
+	(No symbol) [0x00E080BD]
+	GetHandleVerifier [0x011F3A93+2876371]
+	GetHandleVerifier [0x01247F5D+3221661]
+	GetHandleVerifier [0x00FBD634+556916]
+	GetHandleVerifier [0x00FC474C+585868]
+	(No symbol) [0x00EDCE04]
+	(No symbol) [0x00ED9818]
+	(No symbol) [0x00ED99B7]
+	(No symbol) [0x00ECBF0E]
+	BaseThreadInitThunk [0x75A37BA9+25]
+	RtlInitializeExceptionChain [0x779BC10B+107]
+	RtlClearBits [0x779BC08F+191]
+
+Time taken: 119.52 seconds
+
+Model: claude_3_sonnet
+Provider: PerplexityApi
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: PerplexityLabs
+Error: Model is not supported: claude_3_sonnet in: PerplexityLabs
+Time taken: 6.21 seconds
+
+Model: claude_3_sonnet
+Provider: Pi
+Error: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=126.0.6478.127)
+Stacktrace:
+	GetHandleVerifier [0x0101C1C3+27395]
+	(No symbol) [0x00FB3DC4]
+	(No symbol) [0x00EB1B7F]
+	(No symbol) [0x00E8E483]
+	(No symbol) [0x00F1A06F]
+	(No symbol) [0x00F2C3D6]
+	(No symbol) [0x00F13736]
+	(No symbol) [0x00EE7541]
+	(No symbol) [0x00EE80BD]
+	GetHandleVerifier [0x012D3A93+2876371]
+	GetHandleVerifier [0x01327F5D+3221661]
+	GetHandleVerifier [0x0109D634+556916]
+	GetHandleVerifier [0x010A474C+585868]
+	(No symbol) [0x00FBCE04]
+	(No symbol) [0x00FB9818]
+	(No symbol) [0x00FB99B7]
+	(No symbol) [0x00FABF0E]
+	BaseThreadInitThunk [0x75A37BA9+25]
+	RtlInitializeExceptionChain [0x779BC10B+107]
+	RtlClearBits [0x779BC08F+191]
+
+Time taken: 104.89 seconds
+
+Model: claude_3_sonnet
+Provider: Pizzagpt
+Response: Hello! I'm just a virtual assistant, so I don't have feelings, but I'm here to help you. How can I assist you today?
+Time taken: 2.08 seconds
+
+Model: claude_3_sonnet
+Provider: Poe
+Error: Model are not supported: claude_3_sonnet
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: Raycast
+Response: 
+Time taken: 3.22 seconds
+
+Model: claude_3_sonnet
+Provider: Reka
+Error: No cookies found for chat.reka.ai
+Time taken: 0.27 seconds
+
+Model: claude_3_sonnet
+Provider: Replicate
+Error: api_key is missing
+Time taken: 0.01 seconds
+
+Model: claude_3_sonnet
+Provider: ReplicateHome
+Error: list index out of range
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: TalkAi
+Error: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=126.0.6478.127)
+Stacktrace:
+	GetHandleVerifier [0x00ADC1C3+27395]
+	(No symbol) [0x00A73DC4]
+	(No symbol) [0x00971B7F]
+	(No symbol) [0x0094E483]
+	(No symbol) [0x009DA06F]
+	(No symbol) [0x009EC3D6]
+	(No symbol) [0x009D3736]
+	(No symbol) [0x009A7541]
+	(No symbol) [0x009A80BD]
+	GetHandleVerifier [0x00D93A93+2876371]
+	GetHandleVerifier [0x00DE7F5D+3221661]
+	GetHandleVerifier [0x00B5D634+556916]
+	GetHandleVerifier [0x00B6474C+585868]
+	(No symbol) [0x00A7CE04]
+	(No symbol) [0x00A79818]
+	(No symbol) [0x00A799B7]
+	(No symbol) [0x00A6BF0E]
+	BaseThreadInitThunk [0x75A37BA9+25]
+	RtlInitializeExceptionChain [0x779BC10B+107]
+	RtlClearBits [0x779BC08F+191]
+
+Time taken: 53.16 seconds
+
+Model: claude_3_sonnet
+Provider: Theb
+Error: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0023C1C3+27395]
+	(No symbol) [0x001D3DC4]
+	(No symbol) [0x000D1B7F]
+	(No symbol) [0x00112C65]
+	(No symbol) [0x00112D3B]
+	(No symbol) [0x0014EC82]
+	(No symbol) [0x001339E4]
+	(No symbol) [0x0014CB24]
+	(No symbol) [0x00133736]
+	(No symbol) [0x00107541]
+	(No symbol) [0x001080BD]
+	GetHandleVerifier [0x004F3A93+2876371]
+	GetHandleVerifier [0x00547F5D+3221661]
+	GetHandleVerifier [0x002BD634+556916]
+	GetHandleVerifier [0x002C474C+585868]
+	(No symbol) [0x001DCE04]
+	(No symbol) [0x001D9818]
+	(No symbol) [0x001D99B7]
+	(No symbol) [0x001CBF0E]
+	BaseThreadInitThunk [0x75A37BA9+25]
+	RtlInitializeExceptionChain [0x779BC10B+107]
+	RtlClearBits [0x779BC08F+191]
+	(No symbol) [0x00000000]
+
+Time taken: 790.95 seconds
+
+Model: claude_3_sonnet
+Provider: ThebApi
+Error: Add a "api_key"
+Time taken: 0.00 seconds
+
+Model: claude_3_sonnet
+Provider: Vercel
+Error: Non-base64 digit found
+Time taken: 1.52 seconds
+
+Model: claude_3_sonnet
+Provider: WhiteRabbitNeo
+Error: Response 401: Unauthorized
+Time taken: 1.10 seconds
+
+Model: claude_3_sonnet
+Provider: You
+Error: Model is not supported: claude_3_sonnet in: You
+Time taken: 0.01 seconds
+
+
+
+
