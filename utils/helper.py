@@ -17,10 +17,10 @@ def save_btn(bot_response):
     with col3:
         if st.download_button('Save as DOCX', save_as_doc(bot_response), file_name='notes.docx'):
             st.toast('Notes Save as DOCX', icon='🎉')
-    # with col4:
-    #     # if st.button('Copy'):
-    #     #     pyperclip.copy(bot_response)
-    #     #     st.toast('Notes Copy to Clipboard', icon='🎉')
+    with col4:
+        if st.button('Copy'):
+            pyperclip.copy(bot_response)
+            st.toast('Notes Copy to Clipboard', icon='🎉')
     st.markdown('---')
 
 
