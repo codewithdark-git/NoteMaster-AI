@@ -1,5 +1,5 @@
 token.env
-myenv
+myenv/
 ex.env
 test.py
 test2.py
