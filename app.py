@@ -64,6 +64,11 @@ def main():
     internal_model = get_model(display_model)
     provider_name = get_provider(internal_model)
 
+    if internal_model == 404:
+        st.error("Model not found")
+
+    bot_response = ""
+
     if 'selected_note_id' in st.session_state:
         note_content = st.session_state.selected_note_content
         note_image = st.session_state.selected_note_image
@@ -120,6 +125,9 @@ def main():
                     prompt = generate_prompt(combined_text, tag)
                     try:
                         bot_response = get_bot_response(prompt, internal_model, provider_name)
+                        if bot_response is None:
+                            st.toast('Cannot Generate Notes', icon='👾')
+                            st.stop()
                     except Exception as e:
                         st.error(f'Error generating bot response {e}')
                 st.markdown('---')
@@ -139,6 +147,7 @@ def main():
                               (bot_response, img_str, timestamp))
                 conn.commit()
                 st.toast('Notes saved in App.', icon='🎊')
+
 
         elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")

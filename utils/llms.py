@@ -1,11 +1,11 @@
 import g4f.cookies
 from g4f.client import Client
+import streamlit as st
 import base64
 
 
 # Dictionary mapping model names to provider names
 model_provider_mapping = {
-    'gpt-3.5-turbo': 'DDG',
     'gpt-4o': None,
     'mixtral_8x7b': 'HuggingFace',
     'blackbox': 'Blackbox',
@@ -16,7 +16,6 @@ model_provider_mapping = {
 
 # Dictionary mapping display model names to internal model names
 display_model_mapping = {
-    'gpt 3.5 turbo': 'gpt-3.5-turbo',
     'gpt 4o': 'gpt-4o',
     'llama 3': 'llama3_70b_instruct',
     'Mixtral 70b': 'mixtral_8x7b',
@@ -85,6 +84,7 @@ def generate_link_prompt(link, user_prompt):
 
 
 def get_bot_response(prompt, internal_model, provider_name):
+    try:
         client = Client()
         response = client.chat.completions.create(
             model=internal_model,
@@ -93,6 +93,7 @@ def get_bot_response(prompt, internal_model, provider_name):
             cookies=g4f.cookies.get_cookies('bing')
         )
         return response.choices[0].message.content
-
+    except Exception as e:
+        st.error(f'Error generating response.{e}')
 
 
