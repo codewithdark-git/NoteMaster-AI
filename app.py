@@ -67,7 +67,7 @@ def main():
     if internal_model == 404:
         st.error("Model not found")
 
-    bot_response = ""
+    
 
     if 'selected_note_id' in st.session_state:
         note_content = st.session_state.selected_note_content
