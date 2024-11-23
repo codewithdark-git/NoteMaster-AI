@@ -1,35 +1,43 @@
-# NoteMaster AI
+# NoteMaster AI - FastAPI Component
 
 ## Overview
 
-NoteMaster AI is a Streamlit-based web application that allows users to turn their photos into well-structured notes using AI. It supports various formats for saving notes and features functionalities to view, update, and delete saved notes.
+NoteMaster AI's FastAPI component provides a robust backend service for transforming photos into structured notes using AI. It handles image processing, text extraction, and note generation, offering a RESTful API for seamless integration into various applications.
+
 ## Features
 
-- **Multiple Image Upload**: Users can upload multiple images in JPG, JPEG, or PNG format.
-- **Image to Text Conversion**: Extracts text from images using Tesseract OCR.
-- **AI-Powered Note Generation**: Organizes extracted text into structured notes using GPT-4.
-- **Math Problem Solving**: Identifies and solves math-related content from images.
-- **Download Options**: Save notes as TXT, PDF, or DOCX files.
-- **Copy to Clipboard**: Easily copy generated notes to the clipboard.
-- **Edit save Notes**: Generate additional content for existing notes using custom prompts.
+- **Image Upload**: Accepts multiple image formats for processing.
+- **Text Extraction**: Utilizes Tesseract OCR for extracting text from images.
+- **AI-Driven Note Generation**: Uses AI models to convert extracted text into organized notes.
+- **API Endpoints**: Provides endpoints for image processing, note management, and more.
 
 ## Available Models
-The following models are available in the app:
 
-- *GPT 3.5 turbo*
-- *GPT 4o*
-- *llama 3*
-- *Mixtral 70b*
-- *BlackBox*
-- *Meta AI*
+The FastAPI component supports the following AI models:
+- **GPT-3.5 Turbo**
+- **GPT-4o**
+- **Llama 3**
+- **Mixtral 70b**
+- **BlackBox**
+- **Meta AI**
 
+## Installation Options
+
+### Option 1: Streamlit Only Version (First Release)
+If you want to use the app without FastAPI, you can use the first release of NoteMaster AI which is Streamlit-only:
+1. Go to the [Releases](https://github.com/codewithdark-git/NoteMaster-AI/releases) page.
+2. Download the first release.
+3. Follow the installation steps as mentioned above.
+
+### Option 2: Full Version with FastAPI
+The current version includes FastAPI for enhanced functionality. Follow the standard installation steps mentioned below to use this version.
 
 ## Installation
 
 1. Clone the repository:
     ```bash
     git clone https://github.com/codewithdark-git/NoteMaster-AI.git
-    cd NoteMaster AI
+    cd NoteMaster-AI
     ```
 
 2. Install the required packages:
@@ -37,26 +45,40 @@ The following models are available in the app:
     pip install -r requirements.txt
     ```
 
-3. Download Tesseract OCR from [here](https://github.com/tesseract-ocr/tesseract).
-
-5. Run the Streamlit app:
+3. Run the API generation script:
     ```bash
-    streamlit run app.py
+    python backend/generate_api.py
+    ```
+
+   After running the script, copy the API from `.env` and add it to your frontend configuration.
+
+4. Start the FastAPI server:
+    ```bash
+    uvicorn fastapi_app:app --reload
     ```
 
 ## Usage
 
-1. Upload one or more images by clicking on "📁 Choose images...".
-2. Wait for the images to be processed and text to be extracted.
-3. View the generated notes in the "Saved Notes" section.
-4. Choose to download the notes as TXT, PDF, or DOCX, copy them to the clipboard, or save them to Google Docs.
+1. **Access the API**:
+   - The API runs on `http://localhost:8000`
+   - Access the interactive API documentation at `http://localhost:8000/docs`
+
+2. **Endpoints**:
+   - `POST /generate_from_images`: Generate notes from uploaded images
+   - `POST /generate_from_link`: Generate notes from a link
+   - `GET /notes/`: Retrieve all notes
+   - `DELETE /notes/{note_id}`: Remove notes
+
+3. **Example Usage**:
+   - `curl -X POST -F "files=@image1.jpg" http://localhost:8000/generate_from_images`
+   - `curl -X POST -F  http://localhost:8000/generate_from_link`
+   - `curl -X GET http://localhost:8000/notes/`
+   - `curl -X DELETE http://localhost:8000/notes/{note_id}`
 
 ## Customization
 
-You can customize the app by modifying the following components:
-
-- **CSS Styling**: Adjust the styles in the `st.markdown` block to change the appearance of the app.
-- **Prompt Configuration**: Modify the prompt in the `prompt` variable to adjust the note-taking instructions given to the AI.
+- **Model Configuration**: Adjust model settings in `fastapi_app.py`.
+- **API Behavior**: Modify processing parameters and response formats.
 
 ## Contributing
 
