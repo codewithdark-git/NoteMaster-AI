@@ -3,16 +3,17 @@ from PIL import Image
 import numpy as np
 import io
 import datetime
-from utils.helper import save_btn
-from utils.ocr import image_to_text
-from utils.llms import (
+from backend.utils.helper import save_btn, process_images
+from backend.utils.web_agent import web_agent_flow
+from backend.utils.ocr import image_to_text
+from backend.utils.llms import (
     get_bot_response,
     display_model_mapping,
     get_model, get_provider,
     generate_prompt,
     generate_link_prompt
 )
-from utils.db import init_db
+from backend.utils.db import init_db
 
 
 def load_css(file_name):
@@ -20,19 +21,7 @@ def load_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
-def process_images(uploaded_files):
-        images = []
-        text_list = []
-        for uploaded_file in uploaded_files:
-            image = Image.open(uploaded_file)
-            image_array = np.array(image)
-            if image.mode == 'RGBA':
-                image = image.convert('RGB')
-            extracted_text = image_to_text(image_array)
-            text_list.append(str(extracted_text))
-            images.append(image)
-            st.toast('Processed Image Successfully!', icon='🚀')
-        return text_list, images
+
 
 
 def display_saved_notes(c, conn):
@@ -152,10 +141,11 @@ def main():
         elif option == 'Generate From Links':
             url = st.text_input("Enter the URL of the blog or YouTube video:")
             user_prompt = st.chat_input("Enter the prompt about your Link:")
-            if user_prompt:
+            if url:
                 with st.spinner(f'*{user_prompt}* \n {url}'):
                     prompt = generate_link_prompt(url, user_prompt)
-                    bot_response = get_bot_response(prompt, internal_model, provider_name)
+                    # bot_response = get_bot_response(prompt, internal_model, provider_name)
+                    bot_response = web_agent_flow(url)
                 st.markdown('----')
                 st.chat_message("user").write(f'*{user_prompt}* \n {url}')
                 st.write(bot_response)
