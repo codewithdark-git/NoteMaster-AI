@@ -2,5 +2,5 @@
 api.env
 packages.txt
 venv
-backend/_pycache_
+/_pycache_
 /.idea

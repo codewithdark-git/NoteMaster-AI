@@ -34,52 +34,36 @@ def process_images(uploaded_files):
     images = []
     text_list = []
     try:
-        logger.debug(f"Starting to process {len(uploaded_files)} files")
         
         for uploaded_file in uploaded_files:
-            try:
-                logger.debug(f"Processing file of type: {type(uploaded_file)}")
-                
+            try:  
                 # Open image from BytesIO
                 image = Image.open(uploaded_file)
-                logger.debug(f"Image opened successfully. Mode: {image.mode}")
-                
                 # Convert to RGB if necessary
                 if image.mode == 'RGBA':
                     image = image.convert('RGB')
-                    logger.debug("Converted image from RGBA to RGB")
-                
+                    
                 # Convert to numpy array for OCR
                 image_array = np.array(image)
-                logger.debug(f"Converted to numpy array. Shape: {image_array.shape}")
-                
+                 
                 # Extract text using OCR
-                logger.debug("Starting OCR extraction")
                 extracted_text = image_to_text(image_array)
-                logger.debug(f"OCR extraction completed. Result type: {type(extracted_text)}")
-                logger.debug(f"Extracted text: {extracted_text}")
                 
                 # Only append non-empty text
                 if extracted_text and isinstance(extracted_text, str) and extracted_text.strip():
                     text_list.append(extracted_text)
                     images.append(image)
-                    logger.debug("Added text and image to lists")
-                else:
-                    logger.warning(f"Skipping invalid text result: {extracted_text}")
-            
+                    
             except Exception as img_error:
-                logger.error(f"Error processing individual image: {str(img_error)}", exc_info=True)
-                continue
+                    continue
         
         if not text_list:
-            logger.error("No valid text extracted from any images")
-            raise Exception("No text could be extracted from any of the images")
             
-        logger.debug(f"Successfully processed {len(text_list)} images")
+            raise Exception("No text could be extracted from any of the images")     
         return text_list, images
         
     except Exception as e:
-        logger.error(f"Error in process_images: {str(e)}", exc_info=True)
+
         raise Exception(f"Error processing images: {str(e)}")
     finally:
         # Clean up BytesIO objects
@@ -87,7 +71,6 @@ def process_images(uploaded_files):
             try:
                 file.close()
             except Exception as close_error:
-                logger.error(f"Error closing file: {str(close_error)}")
                 pass
 
 def save_as_txt(content):
