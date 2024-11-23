@@ -27,7 +27,7 @@ The FastAPI component supports the following AI models:
 If you want to use the app without FastAPI, you can use the first release of NoteMaster AI which is Streamlit-only:
 1. Go to the [Releases](https://github.com/codewithdark-git/NoteMaster-AI/releases) page.
 2. Download the first release.
-3. Follow the installation steps as mentioned above.
+3. Follow the installation steps as mentioned on the release page.
 
 ### Option 2: Full Version with FastAPI
 The current version includes FastAPI for enhanced functionality. Follow the standard installation steps mentioned below to use this version.
