@@ -1,4 +1,6 @@
-token.env
-ex.env
+.env
+api.env
 packages.txt
 venv
+backend/_pycache_
+/.idea
