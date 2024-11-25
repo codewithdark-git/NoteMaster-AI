@@ -68,12 +68,14 @@ The current version includes FastAPI for enhanced functionality. Follow the stan
    - `POST /generate_from_link`: Generate notes from a link
    - `GET /notes/`: Retrieve all notes
    - `DELETE /notes/{note_id}`: Remove notes
+   - `POST /follow-up-question/`: Generate a follow-up response based on a saved note
 
 3. **Example Usage**:
    - `curl -X POST -F "files=@image1.jpg" http://localhost:8000/generate_from_images`
    - `curl -X POST -F  http://localhost:8000/generate_from_link`
    - `curl -X GET http://localhost:8000/notes/`
    - `curl -X DELETE http://localhost:8000/notes/{note_id}`
+   - `curl -X POST -F "note_id=1" -F "user_prompt=What more can I learn?" http://localhost:8000/follow-up-question/`
 
 ## Customization
 

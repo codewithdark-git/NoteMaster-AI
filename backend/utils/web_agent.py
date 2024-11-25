@@ -4,6 +4,9 @@ from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain_groq import ChatGroq
 import os
+from dotenv import load_dotenv
+
+load_dotenv('.env')
 
 # check the Groq api set up
 if os.getenv('GROQ_API_KEY') is None:
@@ -28,15 +31,6 @@ def web_agent_flow(link):
     )
 
     # Ask a question
-    query = "Summarize the key points and main topic of the loaded webpage content in a concise manner."
+    query = "Extract the most important information and overarching theme from the webpage content, ensuring clarity and completeness."
     response = qa_chain.run(query)
-    return response
-
-def follow_up_Q(prompt, response):
-    follow_up_chain = RetrievalQA.from_chain_type(
-        llm=ChatGroq(),
-        retriever=retriever,
-    )
-    follow_up_query = f"Based on the previous response, {prompt}"
-    follow_up_response = follow_up_chain.run(follow_up_query)
-    return follow_up_response
+    return response.text
