@@ -6,7 +6,7 @@ from backend.utils.web_agent import web_agent_flow
 from backend.utils.llms import (
     get_bot_response, generate_prompt, 
     generate_link_prompt, display_model_mapping,
-    get_model, get_provider 
+    get_model, get_provider, follow_up_Q
 ) 
 from backend.utils.db import init_db
 from PIL import Image
@@ -14,6 +14,7 @@ from fastapi import UploadFile
 import datetime
 import os
 import io
+import base64
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security.api_key import APIKeyHeader
@@ -109,11 +110,16 @@ async def generate_from_images(
 
             # Store in database
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            base64_images = []
             for img in processed_images:
                 buffered = io.BytesIO()
                 img.save(buffered, format="JPEG")
                 img_str = buffered.getvalue()
                 buffered.close()
+
+                # Convert image bytes to Base64
+                img_base64 = base64.b64encode(img_str).decode('utf-8')
+                base64_images.append(img_base64)
                 
                 c.execute(
                     "INSERT INTO notes (content, image, timestamp) VALUES (?, ?, ?)",
@@ -127,7 +133,8 @@ async def generate_from_images(
                     "message": "Notes generated and saved successfully",
                     "response": bot_response,
                     "timestamp": timestamp,
-                    "image_count": len(processed_images)
+                    "image_count": len(processed_images),
+                    "images": base64_images  # Include Base64 images in response
                 },
                 status_code=200
             )
@@ -160,9 +167,22 @@ async def generate_from_link(url: str = Form(...), api_key: str = Depends(get_ap
 @app.get("/notes/")
 async def get_notes(api_key: str = Depends(get_api_key)):
     try:
-        c.execute("SELECT * FROM notes")
+        c.execute("SELECT id, content, image, timestamp FROM notes")
         rows = c.fetchall()
-        return JSONResponse(content={"notes": rows})
+
+        # Convert images to Base64
+        notes = []
+        for row in rows:
+            note_id, content, image_bytes, timestamp = row
+            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            notes.append({
+                "id": note_id,
+                "content": content,
+                "image": image_base64,
+                "timestamp": timestamp
+            })
+
+        return JSONResponse(content={"notes": notes})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
@@ -172,5 +192,31 @@ async def delete_note(note_id: int, api_key: str = Depends(get_api_key)):
         c.execute("DELETE FROM notes WHERE id=?", (note_id,))
         conn.commit()
         return JSONResponse(content={"message": "Note deleted."})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/follow-up-question/")
+async def follow_up_question(note_id: int = Form(...), user_prompt: str = Form(...), api_key: str = Depends(get_api_key)):
+    try:
+        # Fetch the specific note from the database
+        c.execute("SELECT content FROM notes WHERE id=?", (note_id,))
+        row = c.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Note not found.")
+
+        note_content = row[0]
+
+        # Generate follow-up response using follow_up_Q function
+        prompt = follow_up_Q(user_prompt, note_content)
+        follow_up_response = get_bot_response(prompt)
+
+        if not follow_up_response:
+            raise HTTPException(status_code=500, detail="Failed to generate follow-up response.")
+
+        # Update the note in the database by appending new content to the old content
+        c.execute("UPDATE notes SET content = content || ? WHERE id=?", (f"### follow-up response:\n{follow_up_response}", note_id))
+        conn.commit()
+
+        return JSONResponse(content={"follow_up_response": follow_up_response})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")

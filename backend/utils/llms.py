@@ -83,7 +83,15 @@ def generate_link_prompt(link, user_prompt):
     return prompt
 
 
-def get_bot_response(prompt, internal_model, provider_name):
+def follow_up_Q(prompt, response):
+    # write a prompt for follow-up question
+    prompt = f"""
+    Based on the previous response: {response}, what additional information would you like to gather or clarify regarding '{prompt}'?
+    Please provide any specific areas or details you want to further explore.
+    """
+    return prompt
+
+def get_bot_response(prompt, internal_model='gpt-4o', provider_name=None):
     try:
         client = Client()
         response = client.chat.completions.create(
